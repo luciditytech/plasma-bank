@@ -1,0 +1,6 @@
+{
+  "VerifierRegistry": {
+    "tokenAddress": "0x1588d300a9995934aa9daae19be285a66eb46c1c",
+    "verifiersPerShard": 5
+  }
+}

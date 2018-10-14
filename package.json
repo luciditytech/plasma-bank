@@ -1,0 +1,60 @@
+{
+  "name": "plasma-bank",
+  "version": "0.1.0",
+  "description": "Ethereum Banking Library for Andromeda PoS Consensus",
+  "main": "truffle.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "truffle test",
+    "coverage": "./node_modules/.bin/solidity-coverage",
+    "console": "truffle console",
+    "lint:solium": "solium --dir .",
+    "lint:js": "eslint ./test/**/*.js",
+    "lint": "npm run lint:js && npm run lint:solium"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luciditytech/plasma-bank.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/luciditytech/plasma-bank/issues"
+  },
+  "homepage": "https://github.com/luciditytech/plasma-bank#readme",
+  "dependencies": {
+    "abi-decoder": "^1.2.0",
+    "bignumber.js": "^7.2.1",
+    "bip39": "2.5.0",
+    "ethereumjs-abi": "^0.6.5",
+    "ethjs-query": "0.3.8",
+    "js-sha1": "^0.6.0",
+    "js-sha256": "^0.9.0",
+    "jssha": "^2.3.1",
+    "andromeda": "git@github.com:luciditytech/andromeda.git#develop",
+    "plasma": "git+https://github.com/luciditytech/lucidity-plasma.git",
+    "token-sale-contracts": "git@github.com:luciditytech/token-sale-contracts.git#develop",
+    "truffle-hdwallet-provider": "0.0.6",
+    "zeppelin-solidity": "^1.12.0"
+  },
+  "devDependencies": {
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0",
+    "chai": "^4.1.2",
+    "eslint": "^4.18.2",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eth-gas-reporter": "^0.1.10",
+    "ganache-cli": "^6.1.8",
+    "lk-test-helpers": "^0.1.5",
+    "lodash": "^4.17.10",
+    "pify": "^4.0.0",
+    "solidity-coverage": "^0.5.5",
+    "solium": "^1.1.8",
+    "truffle": "^4.1.14",
+    "web3-eth": "^1.0.0-beta.36",
+    "web3-utils": "^1.0.0-beta.36"
+  }
+}
