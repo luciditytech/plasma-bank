@@ -7,7 +7,6 @@ A collection of smart contracts to enable safe non-custodial banking in Andromed
 
 * Connected to a registry for authorization to participate in banking.
 * Depositing of ERC-20 token.
-  * Locking of deposit to increase voting power.
 * Withdrawal based on latest valid Sidechain state.
 
 ## Prerequisites

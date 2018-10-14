@@ -6,8 +6,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 ### Changed
-- Makes verifiers per shard configurable
-
-## [0.1.0] - 2018-10-03
-### Added
-- Verifier registry
+- Adds skeleton of Plasma Bank specification proposal
