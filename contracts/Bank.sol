@@ -145,7 +145,8 @@ contract Bank is Ownable, ReentrancyGuard {
     return true;
   }
 
-  /// @dev this function needs to be called ech time we successfully reveal a proposal
+  /// @dev gets the last valid block root to prevent verifiers from withholding block headers
+  /// @todo determine that the block is valid (i.e. 2/3 verifier signatures)
   function lastValidBlockRootForShard(uint256 _shard) internal view returns (bytes32) {
     Chain chain = Chain(chainAddress);
     uint256 blockHeight = chain.getBlockHeight() - 1;
