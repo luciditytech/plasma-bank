@@ -29,7 +29,7 @@ contract Bank is Ownable, ReentrancyGuard {
   }
 
   /**
-   * @dev Callback for standard ERC-20 tokens when accepting deposits.
+   * @dev Callback for standard ERC-20 token accepting contracts and is called when accepting deposits.
    */
 
   function receiveApproval (
@@ -60,10 +60,7 @@ contract Bank is Ownable, ReentrancyGuard {
     uint256 _amount,
     bytes32[] _proof
   ) public nonReentrant returns (bool success) {
-    Chain chain = Chain(chainAddress);
-    uint256 blockHeight = chain.getBlockHeight() - 1;
-
-    bytes32 root = chain.getBlockRoot(blockHeight, _shard);
+    bytes32 root = lastValidBlockRootForShard(_shard);
 
     bytes32 leafValue = keccak256(abi.encodePacked(tokenAddress, msg.sender, _amount));
 
@@ -89,6 +86,8 @@ contract Bank is Ownable, ReentrancyGuard {
     uint256 _balance,
     bytes32[] _proof
   ) public nonReentrant returns (bool success) {
+    Chain chain = Chain(chainAddress);
+
     Account storage account = accounts[_withdrawer];
     require(account.withdrawing > 0);
 
@@ -99,11 +98,8 @@ contract Bank is Ownable, ReentrancyGuard {
 
     require((block.number - account.withdrawingAt) < challengePeriod);
 
-    Chain chain = Chain(chainAddress);
-    uint256 blockHeight = chain.getBlockHeight() - 1;
+    bytes32 root = lastValidBlockRootForShard(account.withdrawingShard);
 
-    bytes32 root = chain.getBlockRoot(blockHeight, account.withdrawingShard);
-  
     bytes32 leafValue = keccak256(abi.encodePacked(tokenAddress, _withdrawer, _balance));
 
     require(MerkleProof.verifyProof(_proof, root, leafValue));
@@ -147,5 +143,21 @@ contract Bank is Ownable, ReentrancyGuard {
     account.withdrawingAt = 0;
 
     return true;
+  }
+
+  /// @dev this function needs to be called ech time we successfully reveal a proposal
+  function lastValidBlockRootForShard(uint256 _shard) internal view returns (bytes32) {
+    Chain chain = Chain(chainAddress);
+    uint256 blockHeight = chain.getBlockHeight() - 1;
+
+    for (uint256 i = blockHeight; i >= 0; i--) {
+      bytes32 root = chain.getBlockRoot(i, _shard);
+
+      if (root != 0x0) {
+        return root;
+      }
+    }
+
+    return 0x0;
   }
 }
