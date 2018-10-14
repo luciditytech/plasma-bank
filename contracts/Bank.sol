@@ -95,8 +95,7 @@ contract Bank is Ownable, ReentrancyGuard {
 
     require(account.withdrawing > _balance);
 
-    uint256 waitingRounds = 2;
-    uint256 challengePeriod = chain.blocksPerPhase() * (waitingRounds * 2);
+    uint256 challengePeriod = chain.blocksPerPhase() * (challengeWaitingRounds * 2);
 
     require((block.number - account.withdrawingAt) < challengePeriod);
 
