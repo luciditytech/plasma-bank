@@ -12,6 +12,8 @@ contract Bank is Ownable, ReentrancyGuard {
   address public chainAddress;
   uint256 public balance;
 
+  uint256 challengeWaitingRounds = 2;
+
   struct Account {
     uint256 withdrawing;
     uint256 withdrawingAt;
@@ -128,8 +130,7 @@ contract Bank is Ownable, ReentrancyGuard {
     Account storage account = accounts[msg.sender];
     require(account.withdrawing > 0);
 
-    uint256 waitingRounds = 2;
-    uint256 challengePeriod = chain.blocksPerPhase() * (waitingRounds * 2);
+    uint256 challengePeriod = chain.blocksPerPhase() * (challengeWaitingRounds * 2);
 
     require((block.number - account.withdrawingAt) >= challengePeriod);
 
@@ -146,7 +147,7 @@ contract Bank is Ownable, ReentrancyGuard {
   }
 
   /// @dev gets the last valid block root to prevent verifiers from withholding block headers
-  /// @todo determine that the block is valid (i.e. 2/3 verifier signatures)
+  /// @dev TODO: determine that the block is valid (i.e. 2/3 verifier signatures)
   function lastValidBlockRootForShard(uint256 _shard) internal view returns (bytes32) {
     Chain chain = Chain(chainAddress);
     uint256 blockHeight = chain.getBlockHeight() - 1;
