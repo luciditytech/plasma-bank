@@ -19,9 +19,7 @@ contract Bank is Ownable, ReentrancyGuard {
     chainAddress = _chainAddress;
   }
 
-  /**
-   * @dev Callback for standard ERC-20 token accepting contracts and is called when accepting deposits.
-   */
+  mapping(uint256 => mapping(address => bool)) withdrawals;
 
   function receiveApproval(
     address _from,
@@ -46,7 +44,11 @@ contract Bank is Ownable, ReentrancyGuard {
     uint256 _balance,
     bytes32[] _proof
   ) public nonReentrant returns (bool success) {
-    bytes32 root = lastValidBlockRootForShard(_shard);
+    var (blockHeight, root) = lastValidBlockRootForShard(_shard);
+    require(blockHeight > 0, "couldn't find valid block height");
+
+    bool withdrewAtBlock = withdrawals[blockHeight][msg.sender];
+    require(!withdrewAtBlock);
 
     bytes32 leafValue = keccak256(abi.encodePacked(tokenAddress, msg.sender, _balance));
 
@@ -58,12 +60,12 @@ contract Bank is Ownable, ReentrancyGuard {
 
     require(token.transferFrom(this, msg.sender, _amount));
 
+    withdrawals[blockHeight][msg.sender] = true;
+
     return true;
   }
 
-  /// @dev gets the last valid block root to prevent verifiers from withholding block headers
-  /// @dev TODO: determine that the block is valid (i.e. 2/3 verifier signatures)
-  function lastValidBlockRootForShard(uint256 _shard) internal view returns (bytes32) {
+  function lastValidBlockRootForShard(uint256 _shard) internal view returns (uint256, bytes32) {
     Chain chain = Chain(chainAddress);
     uint256 blockHeight = chain.getBlockHeight() - 1;
 
@@ -71,10 +73,10 @@ contract Bank is Ownable, ReentrancyGuard {
       bytes32 root = chain.getBlockRoot(i, _shard);
 
       if (root != 0x0) {
-        return root;
+        return (i, root);
       }
     }
 
-    return 0x0;
+    return (0, 0x0);
   }
 }
