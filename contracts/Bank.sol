@@ -48,17 +48,17 @@ contract Bank is Ownable, ReentrancyGuard {
     require(blockHeight > 0, "couldn't find valid block height");
 
     bool withdrewAtBlock = withdrawals[blockHeight][msg.sender];
-    require(!withdrewAtBlock);
+    require(!withdrewAtBlock, "account already withdrew in the current consensus round");
 
     bytes32 leafValue = keccak256(abi.encodePacked(tokenAddress, msg.sender, _balance));
 
     require(MerkleProof.verifyProof(_proof, root, leafValue));
 
-    require(_amount <= _balance);
+    require(_amount <= _balance, "attempted to withdraw more than the current balance");
 
     Token token = Token(tokenAddress);
 
-    require(token.transferFrom(this, msg.sender, _amount));
+    require(token.transferFrom(this, msg.sender, _amount), "token transfer failed");
 
     withdrawals[blockHeight][msg.sender] = true;
 
