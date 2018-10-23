@@ -1,13 +1,13 @@
 pragma solidity ^0.4.24;
 
-import "andromeda/contracts/Chain.sol";
+import "./Chain.sol";
 import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
 import 'zeppelin-solidity/contracts/MerkleProof.sol';
 import "zeppelin-solidity/contracts/ReentrancyGuard.sol";
 import 'token-sale-contracts/contracts/Token.sol';
 import 'token-sale-contracts/contracts/HumanStandardToken.sol';
 
-contract Bank is Ownable, ReentrancyGuard {
+contract PlasmaBank is Ownable, ReentrancyGuard {
   address public tokenAddress;
   address public chainAddress;
 
@@ -38,9 +38,8 @@ contract Bank is Ownable, ReentrancyGuard {
     return true;
   }
 
-  function withdraw(
+  function exit(
     uint256 _shard,
-    uint256 _amount,
     uint256 _balance,
     bytes32[] _proof
   ) public nonReentrant returns (bool success) {
@@ -54,11 +53,9 @@ contract Bank is Ownable, ReentrancyGuard {
 
     require(MerkleProof.verifyProof(_proof, root, leafValue));
 
-    require(_amount <= _balance, "attempted to withdraw more than the current balance");
-
     Token token = Token(tokenAddress);
 
-    require(token.transferFrom(this, msg.sender, _amount), "token transfer failed");
+    require(token.transferFrom(this, msg.sender, _balance), "token transfer failed");
 
     withdrawals[blockHeight][msg.sender] = true;
 
